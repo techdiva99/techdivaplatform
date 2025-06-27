@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { Lightbulb, Sparkles } from 'lucide-react';
+import { Lightbulb } from 'lucide-react';
+import TechDivaAvatar from '../common/TechDivaAvatar';
 
 const TechDivaLoader = ({ onComplete }) => {
   const [progress, setProgress] = useState(0);
@@ -67,16 +68,8 @@ const TechDivaLoader = ({ onComplete }) => {
     return (
       <div className="fixed inset-0 bg-gradient-to-br from-orange-400 via-pink-400 to-blue-400 flex items-center justify-center z-50">
         <div className="text-center">
-          <div 
-            className="text-8xl mb-8 animate-ping"
-            style={{ 
-              filter: 'brightness(3) drop-shadow(0 0 50px #FFD700)',
-              textShadow: '0 0 30px #FFD700'
-            }}
-          >
-            💡
-          </div>
-          <div className="text-white text-2xl font-bold animate-pulse">
+          <TechDivaAvatar size="xlarge" showCrown={true} animated={true} />
+          <div className="text-white text-2xl font-bold animate-pulse mt-4">
             ✨ Lighting up the mysteries! ✨
           </div>
         </div>
@@ -89,7 +82,7 @@ const TechDivaLoader = ({ onComplete }) => {
       <div className="text-center max-w-md mx-4">
         {/* TechDiva Avatar */}
         <div className="relative mb-8">
-          <div className="text-6xl mb-4">👩‍💻</div>
+          <TechDivaAvatar size="large" showCrown={true} />
           <div 
             className="text-4xl absolute -top-2 -right-2"
             style={getLightBulbStyle()}

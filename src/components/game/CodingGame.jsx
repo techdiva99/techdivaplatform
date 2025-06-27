@@ -5,6 +5,7 @@ import GameStore from './GameStore';
 import MusicPlayer from './MusicPlayer';
 import ConceptSummary from './ConceptSummary';
 import TechDivaLoader from './TechDivaLoader';
+import TechDivaAvatar from '../common/TechDivaAvatar';
 
 const CodingGame = ({ onBack, currentUser }) => {
   // Game state
@@ -259,7 +260,8 @@ const CodingGame = ({ onBack, currentUser }) => {
           >
             {/* TechDiva character */}
             {isPlayer && (
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center shadow-lg animate-pulse">
+              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center shadow-lg animate-pulse relative">
+                <div className="text-xs absolute -top-2 left-1/2 transform -translate-x-1/2">👑</div>
                 <span className="text-white font-bold text-sm">👩‍💻</span>
               </div>
             )}
@@ -438,7 +440,7 @@ const CodingGame = ({ onBack, currentUser }) => {
       {isPlayingFinalSequence && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md text-center">
-            <div className="text-6xl mb-4 animate-bounce">👩‍💻</div>
+            <TechDivaAvatar size="large" showCrown={true} animated={true} className="mb-4" />
             <h2 className="text-2xl font-bold text-purple-600 mb-4">
               TechDiva is celebrating your victory!
             </h2>
