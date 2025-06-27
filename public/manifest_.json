@@ -1,0 +1,121 @@
+{
+  "name": "TechDIVA - AI Chatbot Platform",
+  "short_name": "TechDIVA",
+  "description": "Create Your Personal AI Companion - Build, share, and monetize custom chatbots",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ff67c7",
+  "theme_color": "#ff67c7",
+  "orientation": "portrait-primary",
+  "scope": "/",
+  "lang": "en-US",
+  "categories": ["productivity", "social", "education", "business"],
+  "screenshots": [
+    {
+      "src": "/images/screenshot-wide.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "TechDIVA Platform Overview"
+    },
+    {
+      "src": "/images/screenshot-narrow.png", 
+      "sizes": "750x1334",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "TechDIVA Mobile Experience"
+    }
+  ],
+  "icons": [
+    {
+      "src": "/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-96x96.png",
+      "sizes": "96x96", 
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Create Chatbot",
+      "short_name": "Create",
+      "description": "Start creating a new AI chatbot",
+      "url": "/create",
+      "icons": [
+        {
+          "src": "/icons/create-shortcut.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "TechDIVA Store", 
+      "short_name": "Store",
+      "description": "Browse TechDIVA products",
+      "url": "/store",
+      "icons": [
+        {
+          "src": "/icons/store-shortcut.png", 
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Chat with TechDIVA",
+      "short_name": "Chat",
+      "description": "Start chatting with TechDIVA AI",
+      "url": "/?chat=open",
+      "icons": [
+        {
+          "src": "/icons/chat-shortcut.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ],
+  "prefer_related_applications": false,
+  "edge_side_panel": {
+    "preferred_width": 400
+  }
+}

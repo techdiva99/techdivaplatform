@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>You're Offline - TechDIVA</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #ff67c7 0%, #0aabde 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .offline-container {
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .logo {
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 30px;
+            background: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #ff67c7;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+        }
+        
+        .logo::after {
+            content: '✨';
+            position: absolute;
+            top: -10px;
+            right: -10px;
+            font-size: 20px;
+        }
+        
+        h1 {
+            font-size: 32px;
+            margin-bottom: 16px;
+            font-weight: bold;
+        }
+        
+        .subtitle {
+            font-size: 18px;
+            margin-bottom: 8px;
+            opacity: 0.9;
+        }
+        
+        .message {
+            font-size: 16px;
+            margin-bottom: 32px;
+            opacity: 0.8;
+            line-height: 1.5;
+        }
+        
+        .offline-features {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature-list {
+            list-style: none;
+            text-align: left;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+        
+        .feature-list li::before {
+            content: '✅';
+            margin-right: 12px;
+            font-size: 16px;
+        }
+        
+        .retry-btn {
+            background: white;
+            color: #ff67c7;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin-right: 16px;
+        }
+        
+        .retry-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+        }
+        
+        .cached-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 14px 32px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+        
+        .cached-btn:hover {
+            background: white;
+            color: #ff67c7;
+        }
+        
+        .connection-status {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #ff4757;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        
+        .connection-status.online {
+            background: #2ed573;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .logo {
+            animation: pulse 2s infinite;
+        }
+        
+        @media (max-width: 480px) {
+            h1 { font-size: 28px; }
+            .subtitle { font-size: 16px; }
+            .message { font-size: 14px; }
+            .retry-btn, .cached-btn { 
+                padding: 12px 24px; 
+                font-size: 14px;
+                display: block;
+                margin: 8px 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="connection-status" id="connectionStatus">
+        📡 You're currently offline
+    </div>
+    
+    <div class="offline-container">
+        <div class="logo">
+            TechDIVA™
+        </div>
+        
+        <h1>You're Offline</h1>
+        <p class="subtitle">But TechDIVA™ still works!</p>
+        
+        <p class="message">
+            No internet connection detected. Don't worry - you can still access cached content and features.
+        </p>
+        
+        <div class="offline-features">
+            <h3 style="margin-bottom: 16px; font-size: 18px;">Available Offline:</h3>
+            <ul class="feature-list">
+                <li>Browse cached TechDIVA™ products</li>
+                <li>View your shopping cart</li>
+                <li>Read saved chatbot conversations</li>
+                <li>Access your profile and settings</li>
+                <li>Create new chatbot drafts</li>
+            </ul>
+        </div>
+        
+        <div class="actions">
+            <button class="retry-btn" onclick="checkConnection()">
+                🔄 Try Again
+            </button>
+            <a href="/" class="cached-btn">
+                📱 Continue Offline
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Check online/offline status
+        function updateConnectionStatus() {
+            const status = document.getElementById('connectionStatus');
+            if (navigator.onLine) {
+                status.textContent = '🌐 Back online!';
+                status.className = 'connection-status online';
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            } else {
+                status.textContent = '📡 You\'re currently offline';
+                status.className = 'connection-status';
+            }
+        }
+        
+        function checkConnection() {
+            if (navigator.onLine) {
+                window.location.reload();
+            } else {
+                // Show feedback
+                const btn = document.querySelector('.retry-btn');
+                const originalText = btn.textContent;
+                btn.textContent = '❌ Still offline';
+                btn.style.background = '#ff4757';
+                btn.style.color = 'white';
+                
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'white';
+                    btn.style.color = '#ff67c7';
+                }, 2000);
+            }
+        }
+        
+        // Listen for connection changes
+        window.addEventListener('online', updateConnectionStatus);
+        window.addEventListener('offline', updateConnectionStatus);
+        
+        // Initial status check
+        updateConnectionStatus();
+        
+        // Auto-retry connection every 30 seconds
+        setInterval(() => {
+            if (navigator.onLine) {
+                updateConnectionStatus();
+            }
+        }, 30000);
+        
+        // Register for background sync when back online
+        if ('serviceWorker' in navigator && 'sync' in window.ServiceWorkerRegistration.prototype) {
+            window.addEventListener('online', () => {
+                navigator.serviceWorker.ready.then(registration => {
+                    return registration.sync.register('background-sync');
+                });
+            });
+        }
+    </script>
+</body>
+</html>

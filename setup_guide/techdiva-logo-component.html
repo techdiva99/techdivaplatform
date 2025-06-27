@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TechDivaLogo Component Setup</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #ff67c7;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .file-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .file-path {
+            background: #ff67c7;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        .code-block {
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre;
+        }
+        .copy-btn {
+            background: #0aabde;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+            margin-top: -45px;
+            position: relative;
+            z-index: 10;
+        }
+        .copy-btn:hover {
+            background: #0896c5;
+        }
+        .instructions {
+            background: #ffecf8;
+            border: 2px solid #ff67c7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .instructions h2 {
+            color: #ff67c7;
+            margin-top: 0;
+        }
+        .instructions ol {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .instructions li {
+            margin: 5px 0;
+        }
+        .instructions code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        .folder-structure {
+            background: #2d2d2d;
+            color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            font-family: monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>TechDivaLogo Component with External SVG</h1>
+        
+        <div class="instructions">
+            <h2>📋 Setup Instructions</h2>
+            <ol>
+                <li>Create the folder structure: <code>src/assets/images/</code></li>
+                <li>Save the SVG file as <code>techdiva-logo.svg</code> in the images folder</li>
+                <li>Replace your TechDivaLogo component with the new version below</li>
+                <li>The component will now load the SVG from the file instead of inline code</li>
+            </ol>
+        </div>
+
+        <div class="folder-structure">
+<pre>src/
+├── assets/
+│   └── images/
+│       └── techdiva-logo.svg
+├── components/
+│   └── common/
+│       └── TechDivaLogo.jsx</pre>
+        </div>
+
+        <!-- SVG File Content -->
+        <div class="file-section">
+            <div class="file-path">src/assets/images/techdiva-logo.svg</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">&lt;svg viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg"&gt;
+  &lt;!-- Scalloped circle background --&gt;
+  &lt;circle cx="100" cy="100" r="90" fill="#ffecf8"/&gt;
+  
+  &lt;!-- Scalloped border --&gt;
+  &lt;path d="M100 10 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m15 2 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m14 5 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m13 7 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m11 10 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m9 12 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m7 13 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m4 14 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m1 15 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-2 15 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-5 14 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-8 13 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-10 11 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-12 9 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-13 7 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-14 4 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-15 1 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-15 -2 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-14 -5 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-13 -8 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-11 -10 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-9 -12 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-7 -13 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-4 -14 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m-1 -15 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m2 -15 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m5 -14 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m8 -13 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m10 -11 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m12 -9 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9 m13 -7 c-5 0 -9 4 -9 9 s4 9 9 9 s9 -4 9 -9 s-4 -9 -9 -9" 
+        fill="none" stroke="#0aabde" stroke-width="2"/&gt;
+  
+  &lt;!-- TECH*DIVA text --&gt;
+  &lt;text x="100" y="50" text-anchor="middle" fill="#ff67c7" font-size="24" font-weight="bold" font-family="Open Sans, Arial, sans-serif"&gt;
+    TECH*DIVA
+  &lt;/text&gt;
+  
+  &lt;!-- Woman with laptop icon --&gt;
+  &lt;g transform="translate(100, 100)"&gt;
+    &lt;!-- Head --&gt;
+    &lt;circle cx="0" cy="-15" r="12" fill="none" stroke="#0aabde" stroke-width="3"/&gt;
+    &lt;!-- Hair/crown --&gt;
+    &lt;path d="M-12 -27 L0 -33 L12 -27" fill="#ff67c7" stroke="#ff67c7" stroke-width="2"/&gt;
+    &lt;!-- Smile --&gt;
+    &lt;path d="M-5 -12 Q0 -9 5 -12" fill="none" stroke="#0aabde" stroke-width="2"/&gt;
+    &lt;!-- Body --&gt;
+    &lt;path d="M-15 0 L-15 12 L15 12 L15 0" fill="none" stroke="#0aabde" stroke-width="3"/&gt;
+    &lt;!-- Heart on chest --&gt;
+    &lt;path d="M-5 5 C-5 2 -2 0 0 3 C2 0 5 2 5 5 C5 8 0 11 0 11 C0 11 -5 8 -5 5" fill="#ff67c7"/&gt;
+    &lt;!-- Laptop --&gt;
+    &lt;rect x="-18" y="12" width="36" height="18" fill="#ff9671" stroke="#ff9671" stroke-width="2" rx="2"/&gt;
+    &lt;rect x="-15" y="15" width="30" height="12" fill="#ffecf8" stroke="#ff9671" stroke-width="1"/&gt;
+  &lt;/g&gt;
+  
+  &lt;!-- Tagline --&gt;
+  &lt;text x="100" y="145" text-anchor="middle" fill="#0aabde" font-size="12" font-family="Open Sans, Arial, sans-serif"&gt;
+    #code_confidence
+  &lt;/text&gt;
+  &lt;text x="100" y="160" text-anchor="middle" fill="#ff67c7" font-size="10" font-family="Open Sans, Arial, sans-serif" font-style="italic"&gt;
+    &lt; you belong here &gt;
+  &lt;/text&gt;
+&lt;/svg&gt;</pre>
+        </div>
+
+        <!-- Updated TechDivaLogo Component -->
+        <div class="file-section">
+            <div class="file-path">src/components/common/TechDivaLogo.jsx</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">import React from 'react';
+import logoSvg from '../../assets/images/techdiva-logo.svg';
+
+const TechDivaLogo = ({ className = "", size = "large", style = {} }) => {
+  const dimensions = size === "large" ? 200 : 100;
+  
+  const sizeMap = {
+    small: 100,
+    medium: 150,
+    large: 200,
+    xlarge: 300
+  };
+  
+  const logoSize = sizeMap[size] || dimensions;
+  
+  return (
+    &lt;img 
+      src={logoSvg}
+      alt="TechDIVA - AI companion for women in tech"
+      className={className}
+      width={logoSize}
+      height={logoSize}
+      style={{
+        display: 'inline-block',
+        ...style
+      }}
+    /&gt;
+  );
+};
+
+export default TechDivaLogo;</pre>
+        </div>
+
+        <!-- Alternative versions -->
+        <div class="file-section">
+            <div class="file-path">Alternative: With error handling and fallback</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">import React, { useState } from 'react';
+import logoSvg from '../../assets/images/techdiva-logo.svg';
+
+const TechDivaLogo = ({ className = "", size = "large", style = {} }) => {
+  const [imgError, setImgError] = useState(false);
+  
+  const sizeMap = {
+    small: 100,
+    medium: 150,
+    large: 200,
+    xlarge: 300
+  };
+  
+  const logoSize = sizeMap[size] || 200;
+  
+  // Fallback component if image fails to load
+  if (imgError) {
+    return (
+      &lt;div 
+        className={className}
+        style={{ 
+          width: logoSize, 
+          height: logoSize, 
+          backgroundColor: '#ffecf8',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          borderRadius: '50%',
+          border: '2px solid #ff67c7',
+          ...style
+        }}
+      &gt;
+        &lt;span style={{ 
+          color: '#ff67c7', 
+          fontWeight: 'bold',
+          fontSize: logoSize / 5
+        }}&gt;
+          TD
+        &lt;/span&gt;
+      &lt;/div&gt;
+    );
+  }
+  
+  return (
+    &lt;img 
+      src={logoSvg}
+      alt="TechDIVA - AI companion for women in tech"
+      className={className}
+      width={logoSize}
+      height={logoSize}
+      style={{
+        display: 'inline-block',
+        ...style
+      }}
+      onError={() => setImgError(true)}
+      loading="lazy"
+    /&gt;
+  );
+};
+
+export default TechDivaLogo;</pre>
+        </div>
+
+        <!-- Alternative with responsive sizing -->
+        <div class="file-section">
+            <div class="file-path">Alternative: With responsive sizing</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">import React from 'react';
+import logoSvg from '../../assets/images/techdiva-logo.svg';
+
+const TechDivaLogo = ({ 
+  className = "", 
+  size = "large",
+  responsive = false,
+  style = {} 
+}) => {
+  const sizeMap = {
+    small: { width: 100, height: 100 },
+    medium: { width: 150, height: 150 },
+    large: { width: 200, height: 200 },
+    xlarge: { width: 300, height: 300 }
+  };
+  
+  const dimensions = sizeMap[size] || sizeMap.large;
+  
+  const imageStyles = responsive 
+    ? { 
+        maxWidth: '100%', 
+        height: 'auto',
+        width: `${dimensions.width}px`,
+        ...style 
+      }
+    : { 
+        width: `${dimensions.width}px`,
+        height: `${dimensions.height}px`,
+        ...style 
+      };
+  
+  return (
+    &lt;img 
+      src={logoSvg}
+      alt="TechDIVA - AI companion for women in tech"
+      className={className}
+      style={imageStyles}
+    /&gt;
+  );
+};
+
+export default TechDivaLogo;</pre>
+        </div>
+
+        <div class="instructions">
+            <h2>✅ Usage Examples</h2>
+            <pre class="code-block">// Basic usage
+&lt;TechDivaLogo size="small" /&gt;
+&lt;TechDivaLogo size="large" /&gt;
+
+// With custom className
+&lt;TechDivaLogo size="medium" className="my-custom-class" /&gt;
+
+// With custom styles
+&lt;TechDivaLogo size="large" style={{ marginBottom: '20px' }} /&gt;
+
+// Responsive version
+&lt;TechDivaLogo size="large" responsive /&gt;</pre>
+        </div>
+
+        <div class="instructions">
+            <h2>🎨 Benefits of Using External SVG</h2>
+            <ul>
+                <li>✅ Cleaner component code</li>
+                <li>✅ Easier to update the logo design</li>
+                <li>✅ Better performance (cached by browser)</li>
+                <li>✅ Can be edited in design tools</li>
+                <li>✅ Reusable across different components</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement.querySelector('.code-block');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.style.backgroundColor = '#22c55e';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = '#0aabde';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

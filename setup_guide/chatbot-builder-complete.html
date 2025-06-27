@@ -1,0 +1,903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatbotBuilder Component</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #ff67c7;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .file-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .file-path {
+            background: #ff67c7;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        .code-block {
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre;
+        }
+        .copy-btn {
+            background: #0aabde;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+            margin-top: -45px;
+            position: relative;
+            z-index: 10;
+        }
+        .copy-btn:hover {
+            background: #0896c5;
+        }
+        .instructions {
+            background: #ffecf8;
+            border: 2px solid #ff67c7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .instructions h2 {
+            color: #ff67c7;
+            margin-top: 0;
+        }
+        .preview {
+            background: white;
+            border: 2px solid #ff67c7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .preview h3 {
+            color: #ff67c7;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ChatbotBuilder - Complete Component</h1>
+        
+        <div class="instructions">
+            <h2>📋 Component Features</h2>
+            <ul>
+                <li>4 Tabs: Basic Info, Categories, Responses, Sharing</li>
+                <li>Avatar and color selection</li>
+                <li>Category management with icons</li>
+                <li>Response builder with keywords</li>
+                <li>Privacy settings and sharing options</li>
+                <li>Form validation</li>
+                <li>Edit and create modes</li>
+            </ul>
+        </div>
+
+        <!-- Main ChatbotBuilder Component (Part 1) -->
+        <div class="file-section">
+            <div class="file-path">src/components/builder/ChatbotBuilder.jsx (Part 1/3)</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">import React, { useState } from 'react';
+import { 
+  Save, X, Plus, Edit, Trash2, Copy, Check, Globe, Lock,
+  Code, Briefcase, Baby, Plane, ChefHat, TrendingUp, 
+  Palette, Music, Languages, MessageCircle, Share2, Download
+} from 'lucide-react';
+import { availableAvatars, availableColors, categoryTemplates } from '../../constants';
+
+const ChatbotBuilder = ({ chatbot, onSave, onCancel }) => {
+  // Initialize state with existing chatbot data or defaults
+  const [botData, setBotData] = useState(chatbot || {
+    name: '',
+    description: '',
+    avatar: '🤖',
+    isPublic: true,
+    primaryColor: '#ff67c7',
+    categories: [],
+    responses: {},
+    tags: []
+  });
+  
+  const [activeTab, setActiveTab] = useState('basic');
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [editingResponse, setEditingResponse] = useState(null);
+  const [errors, setErrors] = useState({});
+  const [showCopyConfirm, setShowCopyConfirm] = useState(false);
+
+  // Validation function
+  const validateForm = () => {
+    const newErrors = {};
+    
+    if (!botData.name.trim()) {
+      newErrors.name = 'Chatbot name is required';
+    }
+    
+    if (!botData.description.trim()) {
+      newErrors.description = 'Description is required';
+    }
+    
+    if (botData.categories.length === 0) {
+      newErrors.categories = 'Please select at least one category';
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Handle save
+  const handleSave = () => {
+    if (validateForm()) {
+      onSave(botData);
+    } else {
+      // Switch to the tab with the first error
+      if (errors.name || errors.description) {
+        setActiveTab('basic');
+      } else if (errors.categories) {
+        setActiveTab('categories');
+      }
+    }
+  };
+
+  // Handle adding a category
+  const handleAddCategory = (categoryId) => {
+    if (!botData.categories.includes(categoryId)) {
+      setBotData({
+        ...botData,
+        categories: [...botData.categories, categoryId],
+        responses: {
+          ...botData.responses,
+          [categoryId]: botData.responses[categoryId] || []
+        }
+      });
+      // Clear category error if it exists
+      if (errors.categories) {
+        setErrors({ ...errors, categories: null });
+      }
+    }
+  };
+
+  // Handle removing a category
+  const handleRemoveCategory = (categoryId) => {
+    const newCategories = botData.categories.filter(cat => cat !== categoryId);
+    const newResponses = { ...botData.responses };
+    delete newResponses[categoryId];
+    
+    setBotData({
+      ...botData,
+      categories: newCategories,
+      responses: newResponses
+    });
+    
+    if (selectedCategory === categoryId) {
+      setSelectedCategory(null);
+    }
+  };
+
+  // Handle adding a response
+  const handleAddResponse = (categoryId) => {
+    const newResponse = {
+      id: `resp_${Date.now()}`,
+      text: '',
+      keywords: []
+    };
+    
+    setBotData({
+      ...botData,
+      responses: {
+        ...botData.responses,
+        [categoryId]: [...(botData.responses[categoryId] || []), newResponse]
+      }
+    });
+    
+    setEditingResponse(`${categoryId}_${newResponse.id}`);
+  };
+
+  // Handle updating a response
+  const handleUpdateResponse = (categoryId, responseId, field, value) => {
+    setBotData({
+      ...botData,
+      responses: {
+        ...botData.responses,
+        [categoryId]: botData.responses[categoryId].map(resp =>
+          resp.id === responseId ? { ...resp, [field]: value } : resp
+        )
+      }
+    });
+  };
+
+  // Handle deleting a response
+  const handleDeleteResponse = (categoryId, responseId) => {
+    setBotData({
+      ...botData,
+      responses: {
+        ...botData.responses,
+        [categoryId]: botData.responses[categoryId].filter(r => r.id !== responseId)
+      }
+    });
+  };
+
+  // Handle copying share link
+  const handleCopyLink = () => {
+    const link = `https://techdiva.ai/chat/${botData.id || 'preview'}`;
+    navigator.clipboard.writeText(link);
+    setShowCopyConfirm(true);
+    setTimeout(() => setShowCopyConfirm(false), 2000);
+  };
+
+  return (
+    &lt;div className="min-h-screen bg-gray-50"&gt;
+      &lt;div className="max-w-7xl mx-auto p-6"&gt;
+        {/* Header */}
+        &lt;div className="bg-white rounded-lg shadow-lg p-6 mb-6"&gt;
+          &lt;div className="flex items-center justify-between mb-4"&gt;
+            &lt;h2 className="text-3xl font-bold text-gray-800"&gt;
+              {chatbot ? 'Edit Chatbot' : 'Create New Chatbot'}
+            &lt;/h2&gt;
+            &lt;div className="flex space-x-3"&gt;
+              &lt;button
+                onClick={onCancel}
+                className="px-6 py-2 text-gray-600 hover:text-gray-800 flex items-center space-x-2"
+              &gt;
+                &lt;X className="w-5 h-5" /&gt;
+                &lt;span&gt;Cancel&lt;/span&gt;
+              &lt;/button&gt;
+              &lt;button
+                onClick={handleSave}
+                className="px-6 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600 flex items-center space-x-2 transform hover:scale-105 transition-all"
+              &gt;
+                &lt;Save className="w-5 h-5" /&gt;
+                &lt;span&gt;Save Chatbot&lt;/span&gt;
+              &lt;/button&gt;
+            &lt;/div&gt;
+          &lt;/div&gt;
+
+          {/* Tabs */}
+          &lt;div className="flex space-x-6 border-b"&gt;
+            {['basic', 'categories', 'responses', 'sharing'].map((tab) =&gt; (
+              &lt;button
+                key={tab}
+                onClick={() =&gt; setActiveTab(tab)}
+                className={`pb-3 px-2 font-medium border-b-2 transition-all ${
+                  activeTab === tab
+                    ? 'text-pink-600 border-pink-600'
+                    : 'text-gray-500 border-transparent hover:text-gray-700'
+                }`}
+              &gt;
+                {tab.charAt(0).toUpperCase() + tab.slice(1)}
+                {tab === 'basic' && (errors.name || errors.description) && (
+                  &lt;span className="ml-2 text-red-500"&gt;*&lt;/span&gt;
+                )}
+                {tab === 'categories' && errors.categories && (
+                  &lt;span className="ml-2 text-red-500"&gt;*&lt;/span&gt;
+                )}
+              &lt;/button&gt;
+            ))}
+          &lt;/div&gt;
+        &lt;/div&gt;</pre>
+        </div>
+
+        <!-- Main ChatbotBuilder Component (Part 2) -->
+        <div class="file-section">
+            <div class="file-path">src/components/builder/ChatbotBuilder.jsx (Part 2/3)</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">        {/* Tab Content */}
+        &lt;div className="bg-white rounded-lg shadow-lg p-6"&gt;
+          {/* Basic Info Tab */}
+          {activeTab === 'basic' && (
+            &lt;div className="space-y-6 max-w-3xl"&gt;
+              {/* Avatar Selection */}
+              &lt;div&gt;
+                &lt;label className="block text-sm font-medium text-gray-700 mb-3"&gt;
+                  Choose Avatar
+                &lt;/label&gt;
+                &lt;div className="flex flex-wrap gap-3"&gt;
+                  {availableAvatars.map(avatar =&gt; (
+                    &lt;button
+                      key={avatar}
+                      onClick={() =&gt; setBotData({ ...botData, avatar })}
+                      className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl transition-all transform hover:scale-110 ${
+                        botData.avatar === avatar
+                          ? 'ring-4 ring-pink-500 ring-offset-2 scale-110'
+                          : 'hover:ring-2 hover:ring-gray-300'
+                      }`}
+                      style={{ backgroundColor: botData.primaryColor + '20' }}
+                    &gt;
+                      {avatar}
+                    &lt;/button&gt;
+                  ))}
+                &lt;/div&gt;
+              &lt;/div&gt;
+
+              {/* Name */}
+              &lt;div&gt;
+                &lt;label className="block text-sm font-medium text-gray-700 mb-2"&gt;
+                  Chatbot Name *
+                &lt;/label&gt;
+                &lt;input
+                  type="text"
+                  value={botData.name}
+                  onChange={(e) =&gt; {
+                    setBotData({ ...botData, name: e.target.value });
+                    if (errors.name) setErrors({ ...errors, name: null });
+                  }}
+                  placeholder="e.g., Career Mentor, Recipe Helper"
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all ${
+                    errors.name ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                /&gt;
+                {errors.name && (
+                  &lt;p className="mt-1 text-sm text-red-500"&gt;{errors.name}&lt;/p&gt;
+                )}
+              &lt;/div&gt;
+
+              {/* Description */}
+              &lt;div&gt;
+                &lt;label className="block text-sm font-medium text-gray-700 mb-2"&gt;
+                  Description *
+                &lt;/label&gt;
+                &lt;textarea
+                  value={botData.description}
+                  onChange={(e) =&gt; {
+                    setBotData({ ...botData, description: e.target.value });
+                    if (errors.description) setErrors({ ...errors, description: null });
+                  }}
+                  placeholder="Describe what your chatbot does and how it helps users..."
+                  rows="4"
+                  className={`w-full px-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all ${
+                    errors.description ? 'border-red-500' : 'border-gray-300'
+                  }`}
+                /&gt;
+                {errors.description && (
+                  &lt;p className="mt-1 text-sm text-red-500"&gt;{errors.description}&lt;/p&gt;
+                )}
+                &lt;p className="mt-1 text-sm text-gray-500"&gt;
+                  {botData.description.length}/200 characters
+                &lt;/p&gt;
+              &lt;/div&gt;
+
+              {/* Color Selection */}
+              &lt;div&gt;
+                &lt;label className="block text-sm font-medium text-gray-700 mb-3"&gt;
+                  Primary Color
+                &lt;/label&gt;
+                &lt;div className="flex flex-wrap gap-3"&gt;
+                  {availableColors.map(color =&gt; (
+                    &lt;button
+                      key={color}
+                      onClick={() =&gt; setBotData({ ...botData, primaryColor: color })}
+                      className={`w-12 h-12 rounded-full transition-all transform hover:scale-110 ${
+                        botData.primaryColor === color
+                          ? 'ring-4 ring-offset-2 scale-110'
+                          : 'hover:ring-2 hover:ring-gray-300'
+                      }`}
+                      style={{ 
+                        backgroundColor: color,
+                        ringColor: color
+                      }}
+                    /&gt;
+                  ))}
+                &lt;/div&gt;
+              &lt;/div&gt;
+
+              {/* Tags */}
+              &lt;div&gt;
+                &lt;label className="block text-sm font-medium text-gray-700 mb-2"&gt;
+                  Tags (comma separated)
+                &lt;/label&gt;
+                &lt;input
+                  type="text"
+                  value={botData.tags.join(', ')}
+                  onChange={(e) =&gt; setBotData({ 
+                    ...botData, 
+                    tags: e.target.value.split(',').map(t =&gt; t.trim()).filter(t =&gt; t)
+                  })}
+                  placeholder="e.g., mentorship, indian-culture, wellness"
+                  className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500 transition-all"
+                /&gt;
+                &lt;p className="mt-1 text-sm text-gray-500"&gt;
+                  Tags help users discover your chatbot
+                &lt;/p&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          )}
+
+          {/* Categories Tab */}
+          {activeTab === 'categories' && (
+            &lt;div className="max-w-4xl"&gt;
+              &lt;h3 className="text-lg font-semibold mb-4"&gt;Select Topics Your Chatbot Can Discuss *&lt;/h3&gt;
+              {errors.categories && (
+                &lt;p className="mb-4 text-sm text-red-500"&gt;{errors.categories}&lt;/p&gt;
+              )}
+              
+              &lt;div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"&gt;
+                {categoryTemplates.map(category =&gt; {
+                  const Icon = category.icon;
+                  const isSelected = botData.categories.includes(category.id);
+                  
+                  return (
+                    &lt;button
+                      key={category.id}
+                      onClick={() =&gt; 
+                        isSelected 
+                          ? handleRemoveCategory(category.id)
+                          : handleAddCategory(category.id)
+                      }
+                      className={`p-4 rounded-lg border-2 transition-all transform hover:scale-105 ${
+                        isSelected
+                          ? 'border-pink-500 bg-pink-50 scale-105'
+                          : 'border-gray-200 hover:border-gray-300 bg-white'
+                      }`}
+                    &gt;
+                      &lt;Icon className={`w-8 h-8 mx-auto mb-2 ${
+                        isSelected ? 'text-pink-600' : 'text-gray-600'
+                      }`} /&gt;
+                      &lt;p className={`text-sm font-medium ${
+                        isSelected ? 'text-pink-700' : 'text-gray-700'
+                      }`}&gt;
+                        {category.label}
+                      &lt;/p&gt;
+                      {isSelected && (
+                        &lt;Check className="w-4 h-4 mx-auto mt-2 text-pink-600" /&gt;
+                      )}
+                    &lt;/button&gt;
+                  );
+                })}
+              &lt;/div&gt;
+
+              {/* Selected Categories Summary */}
+              {botData.categories.length &gt; 0 && (
+                &lt;div className="mt-8 p-4 bg-pink-50 rounded-lg"&gt;
+                  &lt;h4 className="font-medium text-pink-700 mb-2"&gt;
+                    Selected Categories ({botData.categories.length})
+                  &lt;/h4&gt;
+                  &lt;div className="flex flex-wrap gap-2"&gt;
+                    {botData.categories.map(catId =&gt; {
+                      const category = categoryTemplates.find(c =&gt; c.id === catId);
+                      return category ? (
+                        &lt;span
+                          key={catId}
+                          className="px-3 py-1 bg-white rounded-full text-sm font-medium text-pink-700 border border-pink-300"
+                        &gt;
+                          {category.label}
+                        &lt;/span&gt;
+                      ) : null;
+                    })}
+                  &lt;/div&gt;
+                &lt;/div&gt;
+              )}
+            &lt;/div&gt;
+          )}</pre>
+        </div>
+
+        <!-- Main ChatbotBuilder Component (Part 3) -->
+        <div class="file-section">
+            <div class="file-path">src/components/builder/ChatbotBuilder.jsx (Part 3/3)</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">          {/* Responses Tab */}
+          {activeTab === 'responses' && (
+            &lt;div&gt;
+              {botData.categories.length === 0 ? (
+                &lt;div className="text-center py-12"&gt;
+                  &lt;MessageCircle className="w-16 h-16 text-gray-300 mx-auto mb-4" /&gt;
+                  &lt;p className="text-gray-600 text-lg mb-4"&gt;
+                    Please select categories first to add responses.
+                  &lt;/p&gt;
+                  &lt;button
+                    onClick={() =&gt; setActiveTab('categories')}
+                    className="px-6 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
+                  &gt;
+                    Go to Categories
+                  &lt;/button&gt;
+                &lt;/div&gt;
+              ) : (
+                &lt;div className="space-y-6"&gt;
+                  {/* Category Selector */}
+                  &lt;div className="flex flex-wrap gap-2 pb-4 border-b"&gt;
+                    {botData.categories.map(catId =&gt; {
+                      const category = categoryTemplates.find(c =&gt; c.id === catId);
+                      if (!category) return null;
+                      
+                      return (
+                        &lt;button
+                          key={catId}
+                          onClick={() =&gt; setSelectedCategory(catId)}
+                          className={`px-4 py-2 rounded-lg font-medium transition-all ${
+                            selectedCategory === catId
+                              ? 'bg-pink-500 text-white'
+                              : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          }`}
+                        &gt;
+                          {category.label}
+                          &lt;span className="ml-2 text-sm opacity-75"&gt;
+                            ({(botData.responses[catId] || []).length})
+                          &lt;/span&gt;
+                        &lt;/button&gt;
+                      );
+                    })}
+                  &lt;/div&gt;
+
+                  {/* Responses for Selected Category */}
+                  {selectedCategory ? (
+                    &lt;div&gt;
+                      &lt;div className="flex justify-between items-center mb-4"&gt;
+                        &lt;h4 className="text-lg font-semibold"&gt;
+                          Responses for {categoryTemplates.find(c =&gt; c.id === selectedCategory)?.label}
+                        &lt;/h4&gt;
+                        &lt;button
+                          onClick={() =&gt; handleAddResponse(selectedCategory)}
+                          className="flex items-center space-x-2 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-all"
+                        &gt;
+                          &lt;Plus className="w-4 h-4" /&gt;
+                          &lt;span&gt;Add Response&lt;/span&gt;
+                        &lt;/button&gt;
+                      &lt;/div&gt;
+
+                      &lt;div className="space-y-4"&gt;
+                        {(botData.responses[selectedCategory] || []).length === 0 ? (
+                          &lt;div className="text-center py-8 bg-gray-50 rounded-lg"&gt;
+                            &lt;p className="text-gray-600 mb-4"&gt;No responses yet for this category.&lt;/p&gt;
+                            &lt;button
+                              onClick={() =&gt; handleAddResponse(selectedCategory)}
+                              className="text-blue-600 hover:text-blue-700 font-medium"
+                            &gt;
+                              Add your first response
+                            &lt;/button&gt;
+                          &lt;/div&gt;
+                        ) : (
+                          (botData.responses[selectedCategory] || []).map((response, index) =&gt; (
+                            &lt;div key={response.id} className="border rounded-lg p-4 bg-gray-50"&gt;
+                              &lt;div className="flex justify-between items-start mb-2"&gt;
+                                &lt;span className="text-sm font-medium text-gray-600"&gt;
+                                  Response #{index + 1}
+                                &lt;/span&gt;
+                                &lt;button
+                                  onClick={() =&gt; handleDeleteResponse(selectedCategory, response.id)}
+                                  className="text-red-600 hover:bg-red-50 p-1 rounded transition-colors"
+                                  title="Delete response"
+                                &gt;
+                                  &lt;Trash2 className="w-4 h-4" /&gt;
+                                &lt;/button&gt;
+                              &lt;/div&gt;
+                              
+                              {editingResponse === `${selectedCategory}_${response.id}` ? (
+                                &lt;div className="space-y-3"&gt;
+                                  &lt;textarea
+                                    value={response.text}
+                                    onChange={(e) =&gt; handleUpdateResponse(
+                                      selectedCategory, 
+                                      response.id, 
+                                      'text', 
+                                      e.target.value
+                                    )}
+                                    placeholder="Enter your response..."
+                                    rows="3"
+                                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                  /&gt;
+                                  &lt;input
+                                    type="text"
+                                    value={response.keywords.join(', ')}
+                                    onChange={(e) =&gt; handleUpdateResponse(
+                                      selectedCategory,
+                                      response.id,
+                                      'keywords',
+                                      e.target.value.split(',').map(k =&gt; k.trim()).filter(k =&gt; k)
+                                    )}
+                                    placeholder="Keywords that trigger this response (comma separated)"
+                                    className="w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
+                                  /&gt;
+                                  &lt;button
+                                    onClick={() =&gt; setEditingResponse(null)}
+                                    className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600"
+                                  &gt;
+                                    Done
+                                  &lt;/button&gt;
+                                &lt;/div&gt;
+                              ) : (
+                                &lt;div onClick={() =&gt; setEditingResponse(`${selectedCategory}_${response.id}`)} 
+                                     className="cursor-pointer hover:bg-white p-2 rounded transition-colors"&gt;
+                                  &lt;p className="text-gray-700 mb-2"&gt;
+                                    {response.text || &lt;span className="text-gray-400 italic"&gt;Click to add response text&lt;/span&gt;}
+                                  &lt;/p&gt;
+                                  &lt;div className="flex flex-wrap gap-1"&gt;
+                                    {response.keywords.length &gt; 0 ? (
+                                      response.keywords.map((keyword, idx) =&gt; (
+                                        &lt;span key={idx} className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded"&gt;
+                                          {keyword}
+                                        &lt;/span&gt;
+                                      ))
+                                    ) : (
+                                      &lt;span className="text-xs text-gray-400 italic"&gt;No keywords yet&lt;/span&gt;
+                                    )}
+                                  &lt;/div&gt;
+                                &lt;/div&gt;
+                              )}
+                            &lt;/div&gt;
+                          ))
+                        )}
+                      &lt;/div&gt;
+                    &lt;/div&gt;
+                  ) : (
+                    &lt;div className="text-center py-12"&gt;
+                      &lt;p className="text-gray-600 text-lg"&gt;
+                        Select a category above to manage its responses
+                      &lt;/p&gt;
+                    &lt;/div&gt;
+                  )}
+                &lt;/div&gt;
+              )}
+            &lt;/div&gt;
+          )}
+
+          {/* Sharing Tab */}
+          {activeTab === 'sharing' && (
+            &lt;div className="space-y-8 max-w-3xl"&gt;
+              {/* Privacy Settings */}
+              &lt;div&gt;
+                &lt;h3 className="text-lg font-semibold mb-4"&gt;Privacy Settings&lt;/h3&gt;
+                &lt;div className="space-y-3"&gt;
+                  &lt;label className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                         style={{ borderColor: botData.isPublic ? '#71ffbb' : '#e5e7eb' }}&gt;
+                    &lt;input
+                      type="radio"
+                      name="privacy"
+                      checked={botData.isPublic === true}
+                      onChange={() =&gt; setBotData({ ...botData, isPublic: true })}
+                      className="sr-only"
+                    /&gt;
+                    &lt;div className="flex items-center flex-1"&gt;
+                      &lt;div className="w-12 h-12 rounded-full flex items-center justify-center mr-4"
+                           style={{ backgroundColor: '#71ffbb20' }}&gt;
+                        &lt;Globe className="w-6 h-6 text-green-600" /&gt;
+                      &lt;/div&gt;
+                      &lt;div&gt;
+                        &lt;p className="font-medium"&gt;Public&lt;/p&gt;
+                        &lt;p className="text-sm text-gray-600"&gt;Anyone can discover and chat with your bot&lt;/p&gt;
+                      &lt;/div&gt;
+                      {botData.isPublic && &lt;Check className="w-5 h-5 text-green-600 ml-auto" /&gt;}
+                    &lt;/div&gt;
+                  &lt;/label&gt;
+                  
+                  &lt;label className="flex items-center p-4 border-2 rounded-lg cursor-pointer hover:bg-gray-50 transition-colors"
+                         style={{ borderColor: !botData.isPublic ? '#6b7280' : '#e5e7eb' }}&gt;
+                    &lt;input
+                      type="radio"
+                      name="privacy"
+                      checked={botData.isPublic === false}
+                      onChange={() =&gt; setBotData({ ...botData, isPublic: false })}
+                      className="sr-only"
+                    /&gt;
+                    &lt;div className="flex items-center flex-1"&gt;
+                      &lt;div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mr-4"&gt;
+                        &lt;Lock className="w-6 h-6 text-gray-600" /&gt;
+                      &lt;/div&gt;
+                      &lt;div&gt;
+                        &lt;p className="font-medium"&gt;Private&lt;/p&gt;
+                        &lt;p className="text-sm text-gray-600"&gt;Only people with the link can access&lt;/p&gt;
+                      &lt;/div&gt;
+                      {!botData.isPublic && &lt;Check className="w-5 h-5 text-gray-600 ml-auto" /&gt;}
+                    &lt;/div&gt;
+                  &lt;/label&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+
+              {/* Sharing Options */}
+              &lt;div&gt;
+                &lt;h3 className="text-lg font-semibold mb-4"&gt;Share Your Chatbot&lt;/h3&gt;
+                &lt;div className="space-y-4"&gt;
+                  {/* Direct Link */}
+                  &lt;div&gt;
+                    &lt;label className="block text-sm font-medium text-gray-700 mb-2"&gt;
+                      Direct Link
+                    &lt;/label&gt;
+                    &lt;div className="flex space-x-2"&gt;
+                      &lt;input
+                        type="text"
+                        value={`https://techdiva.ai/chat/${botData.id || 'preview'}`}
+                        readOnly
+                        className="flex-1 px-3 py-2 bg-gray-50 border rounded-lg font-mono text-sm"
+                      /&gt;
+                      &lt;button 
+                        onClick={handleCopyLink}
+                        className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg flex items-center space-x-2 transition-colors"
+                      &gt;
+                        {showCopyConfirm ? (
+                          &lt;&gt;
+                            &lt;Check className="w-4 h-4 text-green-600" /&gt;
+                            &lt;span className="text-green-600"&gt;Copied!&lt;/span&gt;
+                          &lt;/&gt;
+                        ) : (
+                          &lt;&gt;
+                            &lt;Copy className="w-4 h-4" /&gt;
+                            &lt;span&gt;Copy&lt;/span&gt;
+                          &lt;/&gt;
+                        )}
+                      &lt;/button&gt;
+                    &lt;/div&gt;
+                  &lt;/div&gt;
+
+                  {/* Embed Code */}
+                  &lt;div&gt;
+                    &lt;label className="block text-sm font-medium text-gray-700 mb-2"&gt;
+                      Embed Code
+                    &lt;/label&gt;
+                    &lt;textarea
+                      readOnly
+                      value={`&lt;iframe src="https://techdiva.ai/embed/${botData.id || 'preview'}" width="400" height="600" frameborder="0"&gt;&lt;/iframe&gt;`}
+                      rows="3"
+                      className="w-full px-3 py-2 bg-gray-50 border rounded-lg font-mono text-sm"
+                    /&gt;
+                    &lt;p className="mt-1 text-sm text-gray-500"&gt;
+                      Copy this code to embed the chatbot in your website
+                    &lt;/p&gt;
+                  &lt;/div&gt;
+
+                  {/* Share Buttons */}
+                  &lt;div&gt;
+                    &lt;label className="block text-sm font-medium text-gray-700 mb-2"&gt;
+                      Share on Social Media
+                    &lt;/label&gt;
+                    &lt;div className="flex space-x-3"&gt;
+                      &lt;button className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 flex items-center space-x-2"&gt;
+                        &lt;Share2 className="w-4 h-4" /&gt;
+                        &lt;span&gt;Twitter&lt;/span&gt;
+                      &lt;/button&gt;
+                      &lt;button className="px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 flex items-center space-x-2"&gt;
+                        &lt;Share2 className="w-4 h-4" /&gt;
+                        &lt;span&gt;Facebook&lt;/span&gt;
+                      &lt;/button&gt;
+                      &lt;button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 flex items-center space-x-2"&gt;
+                        &lt;Share2 className="w-4 h-4" /&gt;
+                        &lt;span&gt;LinkedIn&lt;/span&gt;
+                      &lt;/button&gt;
+                    &lt;/div&gt;
+                  &lt;/div&gt;
+
+                  {/* QR Code */}
+                  &lt;div&gt;
+                    &lt;label className="block text-sm font-medium text-gray-700 mb-2"&gt;
+                      QR Code for Mobile
+                    &lt;/label&gt;
+                    &lt;div className="w-32 h-32 bg-gray-200 rounded-lg flex items-center justify-center"&gt;
+                      &lt;Download className="w-8 h-8 text-gray-400" /&gt;
+                    &lt;/div&gt;
+                    &lt;button className="mt-2 text-sm text-blue-600 hover:text-blue-700 font-medium"&gt;
+                      Download QR Code
+                    &lt;/button&gt;
+                  &lt;/div&gt;
+                &lt;/div&gt;
+              &lt;/div&gt;
+            &lt;/div&gt;
+          )}
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default ChatbotBuilder;</pre>
+        </div>
+
+        <!-- Update constants file if needed -->
+        <div class="file-section">
+            <div class="file-path">Update src/constants/index.js (if not already present)</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">// Add these exports to your constants file if they're not already there
+
+export const availableAvatars = ['🤖', '👩‍💻', '🦸‍♀️', '🧚‍♀️', '👩‍🏫', '👩‍⚕️', '👩‍🍳', '🧘‍♀️', '💜', '🌟'];
+
+export const availableColors = ['#ff67c7', '#0aabde', '#ff9671', '#22c55e', '#a855f7', '#f59e0b', '#ef4444', '#3b82f6'];
+
+export const categoryTemplates = [
+  { id: 'coding', label: 'Coding & Tech', icon: Code },
+  { id: 'career', label: 'Career Advice', icon: Briefcase },
+  { id: 'parenting', label: 'Parenting', icon: Baby },
+  { id: 'travel', label: 'Travel', icon: Plane },
+  { id: 'recipes', label: 'Recipes', icon: ChefHat },
+  { id: 'fitness', label: 'Fitness', icon: TrendingUp },
+  { id: 'art', label: 'Art & Design', icon: Palette },
+  { id: 'music', label: 'Music', icon: Music },
+  { id: 'languages', label: 'Languages', icon: Languages },
+  { id: 'custom', label: 'Custom Topic', icon: Plus }
+];</pre>
+        </div>
+
+        <div class="preview">
+            <h3>🎯 Component Features</h3>
+            <h4>Basic Info Tab:</h4>
+            <ul>
+                <li>Avatar selection with visual feedback</li>
+                <li>Name and description fields with validation</li>
+                <li>Color picker for theme customization</li>
+                <li>Tag management for discoverability</li>
+            </ul>
+            
+            <h4>Categories Tab:</h4>
+            <ul>
+                <li>Grid of category options with icons</li>
+                <li>Toggle selection with visual feedback</li>
+                <li>Selected categories summary</li>
+                <li>Validation to ensure at least one category</li>
+            </ul>
+            
+            <h4>Responses Tab:</h4>
+            <ul>
+                <li>Category-based response management</li>
+                <li>Add/Edit/Delete responses</li>
+                <li>Keywords for response triggering</li>
+                <li>Inline editing with save confirmation</li>
+            </ul>
+            
+            <h4>Sharing Tab:</h4>
+            <ul>
+                <li>Privacy toggle (Public/Private)</li>
+                <li>Copy shareable link</li>
+                <li>Embed code generation</li>
+                <li>Social media sharing buttons</li>
+                <li>QR code placeholder</li>
+            </ul>
+        </div>
+
+        <div class="instructions">
+            <h2>✅ Form Validation</h2>
+            <ul>
+                <li>Required fields are marked with *</li>
+                <li>Validation runs on save</li>
+                <li>Tabs with errors show a red asterisk</li>
+                <li>Auto-switches to tab with first error</li>
+                <li>Real-time error clearing as user types</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement.querySelector('.code-block');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.style.backgroundColor = '#22c55e';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = '#0aabde';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

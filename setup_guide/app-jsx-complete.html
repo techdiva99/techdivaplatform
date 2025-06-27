@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App.jsx - Main Application Component</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #ff67c7;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .file-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .file-path {
+            background: #ff67c7;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        .code-block {
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre;
+        }
+        .copy-btn {
+            background: #0aabde;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+            margin-top: -45px;
+            position: relative;
+            z-index: 10;
+        }
+        .copy-btn:hover {
+            background: #0896c5;
+        }
+        .instructions {
+            background: #ffecf8;
+            border: 2px solid #ff67c7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .instructions h2 {
+            color: #ff67c7;
+            margin-top: 0;
+        }
+        .error-box {
+            background: #fee;
+            border: 2px solid #f66;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .error-box h3 {
+            color: #c00;
+            margin-top: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>App.jsx - Main Application Component</h1>
+        
+        <div class="instructions">
+            <h2>📋 Setup Instructions</h2>
+            <ol>
+                <li>This file should be in your <code>src</code> folder</li>
+                <li>Make sure you have all the required components imported</li>
+                <li>If you're getting import errors, create placeholder components first</li>
+                <li>This is the main component that manages the entire application state</li>
+            </ol>
+        </div>
+
+        <!-- Main App.jsx file -->
+        <div class="file-section">
+            <div class="file-path">src/App.jsx</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">import React, { useState } from 'react';
+import './App.css';
+
+// Import components - create these files if they don't exist yet
+import LandingPage from './components/landing/LandingPage';
+import ChatbotGallery from './components/gallery/ChatbotGallery';
+import ChatbotBuilder from './components/builder/ChatbotBuilder';
+import SmartOnboarding from './components/onboarding/SmartOnboarding';
+import ChatInterface from './components/chat/ChatInterface';
+import Navigation from './components/layout/Navigation';
+
+// Import mock data
+import { mockDatabase } from './data/mockDatabase';
+
+function App() {
+  // State management
+  const [currentView, setCurrentView] = useState('landing');
+  const [currentUser, setCurrentUser] = useState(null);
+  const [chatbots, setChatbots] = useState(mockDatabase.chatbots);
+  const [editingBot, setEditingBot] = useState(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
+  const [chattingBot, setChattingBot] = useState(null);
+
+  // Handle user login
+  const handleLogin = () => {
+    // Set the current user (mock login)
+    setCurrentUser(mockDatabase.users[0]);
+    
+    // Check if new user (no chatbots created yet)
+    const isNewUser = chatbots.filter(bot => bot.userId === mockDatabase.users[0].id).length === 0;
+    if (isNewUser) {
+      setShowOnboarding(true);
+    }
+    
+    // Navigate to gallery
+    setCurrentView('gallery');
+  };
+
+  // Handle onboarding completion
+  const handleOnboardingComplete = (selectedSuggestions) => {
+    setShowOnboarding(false);
+    if (selectedSuggestions.length > 0) {
+      // In a real app, create starter bots based on selections
+      alert(`Creating ${selectedSuggestions.length} starter bots for you!`);
+    }
+  };
+
+  // Handle create new chatbot
+  const handleCreateNew = () => {
+    setEditingBot(null);
+    setCurrentView('builder');
+  };
+
+  // Handle selecting a chatbot
+  const handleSelectBot = (bot) => {
+    if (bot.userId === currentUser?.id) {
+      // If user owns the bot, open editor
+      setEditingBot(bot);
+      setCurrentView('builder');
+    } else {
+      // If it's someone else's bot, open chat
+      setChattingBot(bot);
+    }
+  };
+
+  // Handle saving a chatbot
+  const handleSaveBot = (botData) => {
+    if (editingBot) {
+      // Update existing bot
+      setChatbots(chatbots.map(bot => 
+        bot.id === editingBot.id 
+          ? { ...bot, ...botData, lastUpdated: new Date().toISOString() }
+          : bot
+      ));
+    } else {
+      // Create new bot
+      const newBot = {
+        ...botData,
+        id: `bot_${Date.now()}`,
+        userId: currentUser.id,
+        likes: 0,
+        shares: 0,
+        createdAt: new Date().toISOString(),
+        lastUpdated: new Date().toISOString(),
+        responseCount: Object.values(botData.responses || {}).flat().length
+      };
+      setChatbots([...chatbots, newBot]);
+    }
+    
+    // Return to gallery
+    setCurrentView('gallery');
+    setEditingBot(null);
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    setCurrentUser(null);
+    setCurrentView('landing');
+  };
+
+  // Render different views based on currentView state
+  return (
+    &lt;div className="min-h-screen bg-gray-50"&gt;
+      {/* Landing Page View */}
+      {currentView === 'landing' && (
+        &lt;LandingPage 
+          onGetStarted={handleLogin}
+          onLogin={handleLogin}
+        /&gt;
+      )}
+      
+      {/* Gallery View */}
+      {currentView === 'gallery' && (
+        &lt;&gt;
+          &lt;Navigation 
+            currentUser={currentUser}
+            onLogout={handleLogout}
+            onShowOnboarding={() => setShowOnboarding(true)}
+          /&gt;
+          &lt;ChatbotGallery
+            chatbots={chatbots}
+            onSelectBot={handleSelectBot}
+            onCreateNew={handleCreateNew}
+            currentUser={currentUser}
+          /&gt;
+        &lt;/&gt;
+      )}
+      
+      {/* Builder View */}
+      {currentView === 'builder' && (
+        &lt;ChatbotBuilder
+          chatbot={editingBot}
+          onSave={handleSaveBot}
+          onCancel={() => {
+            setCurrentView('gallery');
+            setEditingBot(null);
+          }}
+        /&gt;
+      )}
+      
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        &lt;SmartOnboarding
+          onComplete={handleOnboardingComplete}
+          currentUser={currentUser}
+        /&gt;
+      )}
+      
+      {/* Chat Interface Modal */}
+      {chattingBot && (
+        &lt;ChatInterface
+          chatbot={chattingBot}
+          onClose={() => setChattingBot(null)}
+        /&gt;
+      )}
+    &lt;/div&gt;
+  );
+}
+
+export default App;</pre>
+        </div>
+
+        <!-- App.css file -->
+        <div class="file-section">
+            <div class="file-path">src/App.css</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">.App {
+  min-height: 100vh;
+}</pre>
+        </div>
+
+        <!-- Placeholder components if needed -->
+        <div class="error-box">
+            <h3>⚠️ Getting Import Errors?</h3>
+            <p>If you're getting errors about missing components, create these placeholder files first:</p>
+        </div>
+
+        <!-- Placeholder ChatbotBuilder -->
+        <div class="file-section">
+            <div class="file-path">src/components/builder/ChatbotBuilder.jsx (Placeholder)</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">import React from 'react';
+
+const ChatbotBuilder = ({ chatbot, onSave, onCancel }) => {
+  return (
+    &lt;div className="min-h-screen bg-gray-50 p-6"&gt;
+      &lt;div className="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6"&gt;
+        &lt;h2 className="text-2xl font-bold mb-4" style={{ color: '#ff67c7' }}&gt;
+          {chatbot ? 'Edit Chatbot' : 'Create New Chatbot'}
+        &lt;/h2&gt;
+        &lt;p className="text-gray-600 mb-4"&gt;Chatbot builder coming soon...</p&gt;
+        &lt;div className="flex space-x-4"&gt;
+          &lt;button
+            onClick={onCancel}
+            className="px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50"
+          &gt;
+            Cancel
+          &lt;/button&gt;
+          &lt;button
+            onClick={() => onSave({ name: 'Test Bot', description: 'Test', responses: {} })}
+            className="px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
+          &gt;
+            Save
+          &lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default ChatbotBuilder;</pre>
+        </div>
+
+        <!-- Placeholder SmartOnboarding -->
+        <div class="file-section">
+            <div class="file-path">src/components/onboarding/SmartOnboarding.jsx (Placeholder)</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">import React from 'react';
+
+const SmartOnboarding = ({ onComplete, currentUser }) => {
+  return (
+    &lt;div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"&gt;
+      &lt;div className="bg-white rounded-lg shadow-xl p-6 max-w-md w-full"&gt;
+        &lt;h2 className="text-2xl font-bold mb-4" style={{ color: '#ff67c7' }}&gt;
+          Welcome to TechDIVA!
+        &lt;/h2&gt;
+        &lt;p className="text-gray-600 mb-4"&gt;
+          Smart onboarding coming soon...
+        &lt;/p&gt;
+        &lt;button
+          onClick={() => onComplete([])}
+          className="w-full px-4 py-2 bg-pink-500 text-white rounded-lg hover:bg-pink-600"
+        &gt;
+          Get Started
+        &lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default SmartOnboarding;</pre>
+        </div>
+
+        <!-- Placeholder ChatInterface -->
+        <div class="file-section">
+            <div class="file-path">src/components/chat/ChatInterface.jsx (Placeholder)</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">import React from 'react';
+import { X } from 'lucide-react';
+
+const ChatInterface = ({ chatbot, onClose }) => {
+  return (
+    &lt;div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"&gt;
+      &lt;div className="bg-white rounded-lg shadow-xl p-6 max-w-2xl w-full max-h-[80vh]"&gt;
+        &lt;div className="flex justify-between items-center mb-4"&gt;
+          &lt;h2 className="text-xl font-bold" style={{ color: chatbot.primaryColor }}&gt;
+            Chat with {chatbot.name}
+          &lt;/h2&gt;
+          &lt;button
+            onClick={onClose}
+            className="p-2 hover:bg-gray-100 rounded-lg"
+          &gt;
+            &lt;X className="w-5 h-5" /&gt;
+          &lt;/button&gt;
+        &lt;/div&gt;
+        &lt;p className="text-gray-600"&gt;Chat interface coming soon...&lt;/p&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+
+export default ChatInterface;</pre>
+        </div>
+
+        <div class="instructions">
+            <h2>✅ What This App.jsx Does</h2>
+            <ul>
+                <li><strong>State Management</strong>: Manages all application state including current view, user, chatbots</li>
+                <li><strong>Navigation</strong>: Controls which view is displayed (landing, gallery, builder)</li>
+                <li><strong>User Authentication</strong>: Handles login/logout (mock implementation)</li>
+                <li><strong>CRUD Operations</strong>: Create, Read, Update chatbots</li>
+                <li><strong>Modal Management</strong>: Shows/hides onboarding and chat modals</li>
+            </ul>
+        </div>
+
+        <div class="instructions">
+            <h2>🚦 Next Steps</h2>
+            <ol>
+                <li>Create this App.jsx file in your src folder</li>
+                <li>If you get import errors, create the placeholder components first</li>
+                <li>Make sure all your components are in the correct folders</li>
+                <li>Run <code>npm start</code> to see your app working!</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement.querySelector('.code-block');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.style.backgroundColor = '#22c55e';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = '#0aabde';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

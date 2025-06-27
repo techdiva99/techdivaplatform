@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ChatbotGallery Component</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #ff67c7;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .file-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .file-path {
+            background: #ff67c7;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 4px;
+            font-family: monospace;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+        .code-block {
+            background: #f8f8f8;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 15px;
+            overflow-x: auto;
+            font-family: 'Consolas', 'Monaco', monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre;
+        }
+        .copy-btn {
+            background: #0aabde;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            float: right;
+            margin-top: -45px;
+            position: relative;
+            z-index: 10;
+        }
+        .copy-btn:hover {
+            background: #0896c5;
+        }
+        .instructions {
+            background: #ffecf8;
+            border: 2px solid #ff67c7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .instructions h2 {
+            color: #ff67c7;
+            margin-top: 0;
+        }
+        .preview {
+            background: white;
+            border: 2px solid #ff67c7;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+        .preview h3 {
+            color: #ff67c7;
+            margin-top: 0;
+        }
+        .preview img {
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ChatbotGallery Component</h1>
+        
+        <div class="instructions">
+            <h2>📋 Component Features</h2>
+            <ul>
+                <li>Grid and List view toggle</li>
+                <li>Search functionality</li>
+                <li>Filter by: All, My Chatbots, Public Only</li>
+                <li>Animated hover effects</li>
+                <li>Stats display (likes, shares, responses)</li>
+                <li>Owner indicators</li>
+                <li>Create new chatbot button</li>
+                <li>Responsive design</li>
+            </ul>
+        </div>
+
+        <!-- Main ChatbotGallery Component -->
+        <div class="file-section">
+            <div class="file-path">src/components/gallery/ChatbotGallery.jsx</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">import React, { useState } from 'react';
+import { 
+  Plus, Search, Filter, Grid, List, Heart, Share2, 
+  MessageCircle, Globe, Lock, Crown, ChevronRight, Edit 
+} from 'lucide-react';
+
+const ChatbotGallery = ({ chatbots, onSelectBot, onCreateNew, currentUser }) => {
+  const [filter, setFilter] = useState('all');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [viewMode, setViewMode] = useState('grid');
+
+  // Filter chatbots based on search and filter criteria
+  const filteredBots = chatbots.filter(bot => {
+    const matchesSearch = bot.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         bot.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         bot.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+    
+    const matchesFilter = filter === 'all' || 
+                         (filter === 'mine' && bot.userId === currentUser?.id) ||
+                         (filter === 'public' && bot.isPublic);
+    
+    return matchesSearch && matchesFilter;
+  });
+
+  return (
+    &lt;div className="p-6" style={{ backgroundColor: '#ff67c7' }}&gt;
+      &lt;div className="max-w-7xl mx-auto"&gt;
+        {/* Header Section */}
+        &lt;div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 bg-white rounded-xl p-6 shadow-lg"&gt;
+          &lt;div&gt;
+            &lt;h2 className="text-4xl font-bold mb-2" style={{ color: '#ff67c7' }}&gt;
+              Chatbot Gallery
+            &lt;/h2&gt;
+            &lt;p className="text-lg text-gray-700"&gt;
+              Discover and create amazing AI companions
+            &lt;/p&gt;
+          &lt;/div&gt;
+          &lt;button
+            onClick={onCreateNew}
+            className="mt-4 md:mt-0 flex items-center space-x-2 px-8 py-4 text-white rounded-lg hover:shadow-lg transition-all text-lg transform hover:scale-105"
+            style={{ backgroundColor: '#ff67c7' }}
+          &gt;
+            &lt;Plus className="w-6 h-6" /&gt;
+            &lt;span&gt;Create New Chatbot&lt;/span&gt;
+          &lt;/button&gt;
+        &lt;/div&gt;
+
+        {/* Filters and Search Bar */}
+        &lt;div className="flex flex-col md:flex-row gap-4 mb-8 bg-white rounded-xl p-4 shadow"&gt;
+          {/* Search Input */}
+          &lt;div className="flex-1 relative"&gt;
+            &lt;Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-6 h-6" style={{ color: '#0aabde' }} /&gt;
+            &lt;input
+              type="text"
+              placeholder="Search chatbots by name, description, or tags..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-12 pr-4 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 transition-all text-lg"
+              style={{ 
+                borderColor: '#0aabde',
+                focusBorderColor: '#ff67c7',
+                focusRingColor: '#ff67c7'
+              }}
+            /&gt;
+          &lt;/div&gt;
+          
+          {/* Filter and View Controls */}
+          &lt;div className="flex gap-2"&gt;
+            {/* Filter Dropdown */}
+            &lt;select
+              value={filter}
+              onChange={(e) => setFilter(e.target.value)}
+              className="px-6 py-3 border-2 rounded-lg focus:outline-none focus:ring-2 text-lg cursor-pointer"
+              style={{ 
+                borderColor: '#ff9671',
+                focusRingColor: '#ff9671'
+              }}
+            &gt;
+              &lt;option value="all"&gt;All Chatbots&lt;/option&gt;
+              &lt;option value="mine"&gt;My Chatbots&lt;/option&gt;
+              &lt;option value="public"&gt;Public Only&lt;/option&gt;
+            &lt;/select&gt;
+            
+            {/* View Mode Toggle */}
+            &lt;button
+              onClick={() => setViewMode(viewMode === 'grid' ? 'list' : 'grid')}
+              className="p-3 border-2 rounded-lg hover:bg-pink-50 transition-colors"
+              style={{ borderColor: '#ff67c7' }}
+              title={`Switch to ${viewMode === 'grid' ? 'list' : 'grid'} view`}
+            &gt;
+              {viewMode === 'grid' ? 
+                &lt;List className="w-6 h-6" style={{ color: '#ff67c7' }} /&gt; : 
+                &lt;Grid className="w-6 h-6" style={{ color: '#ff67c7' }} /&gt;
+              }
+            &lt;/button&gt;
+          &lt;/div&gt;
+        &lt;/div&gt;
+
+        {/* Results Count */}
+        &lt;div className="mb-4 text-white"&gt;
+          &lt;p className="text-lg"&gt;
+            Showing {filteredBots.length} chatbot{filteredBots.length !== 1 ? 's' : ''}
+            {searchTerm && ` for "${searchTerm}"`}
+          &lt;/p&gt;
+        &lt;/div&gt;
+
+        {/* Chatbot Grid/List */}
+        {filteredBots.length === 0 ? (
+          &lt;div className="bg-white rounded-xl p-12 text-center"&gt;
+            &lt;p className="text-xl text-gray-600 mb-4"&gt;
+              No chatbots found matching your criteria.
+            &lt;/p&gt;
+            &lt;button
+              onClick={onCreateNew}
+              className="px-6 py-3 text-white rounded-lg hover:shadow-lg transition-all"
+              style={{ backgroundColor: '#ff67c7' }}
+            &gt;
+              Create Your First Chatbot
+            &lt;/button&gt;
+          &lt;/div&gt;
+        ) : (
+          &lt;div className={
+            viewMode === 'grid' 
+              ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" 
+              : "space-y-4"
+          }&gt;
+            {filteredBots.map(bot => (
+              &lt;ChatbotCard
+                key={bot.id}
+                bot={bot}
+                currentUser={currentUser}
+                viewMode={viewMode}
+                onSelectBot={onSelectBot}
+              /&gt;
+            ))}
+          &lt;/div&gt;
+        )}
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+};
+
+// Separate ChatbotCard component for better organization
+const ChatbotCard = ({ bot, currentUser, viewMode, onSelectBot }) => {
+  const isOwner = bot.userId === currentUser?.id;
+  
+  return (
+    &lt;div
+      onClick={() => onSelectBot(bot)}
+      className={`bg-white rounded-xl shadow-lg hover:shadow-xl transition-all cursor-pointer border-2 hover:scale-105 relative group ${
+        viewMode === 'list' ? 'flex items-center p-4' : 'p-6'
+      }`}
+      style={{ borderColor: bot.primaryColor }}
+    &gt;
+      {/* Hover overlay */}
+      &lt;div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-5 rounded-xl transition-all flex items-center justify-center"&gt;
+        &lt;div className="opacity-0 group-hover:opacity-100 transition-opacity"&gt;
+          {isOwner ? (
+            &lt;div className="bg-white px-4 py-2 rounded-full shadow-lg flex items-center space-x-2"&gt;
+              &lt;Edit className="w-4 h-4" style={{ color: bot.primaryColor }} /&gt;
+              &lt;span className="text-sm font-medium" style={{ color: bot.primaryColor }}&gt;
+                Edit Bot
+              &lt;/span&gt;
+            &lt;/div&gt;
+          ) : (
+            &lt;div className="bg-white px-4 py-2 rounded-full shadow-lg flex items-center space-x-2"&gt;
+              &lt;MessageCircle className="w-4 h-4" style={{ color: bot.primaryColor }} /&gt;
+              &lt;span className="text-sm font-medium" style={{ color: bot.primaryColor }}&gt;
+                Try Bot
+              &lt;/span&gt;
+            &lt;/div&gt;
+          )}
+        &lt;/div&gt;
+      &lt;/div&gt;
+      
+      &lt;div className={viewMode === 'list' ? 'flex items-center flex-1' : ''}&gt;
+        {/* Avatar and Privacy */}
+        &lt;div className={`${viewMode === 'list' ? 'mr-4' : 'mb-4'} flex items-center ${
+          viewMode === 'list' ? '' : 'justify-between'
+        }`}&gt;
+          &lt;div className="flex items-center space-x-3"&gt;
+            &lt;div 
+              className="w-12 h-12 rounded-full flex items-center justify-center text-2xl text-white relative shadow-md"
+              style={{ backgroundColor: bot.primaryColor }}
+            &gt;
+              {bot.avatar}
+              {isOwner && (
+                &lt;div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full flex items-center justify-center"&gt;
+                  &lt;Crown className="w-2.5 h-2.5 text-yellow-900" /&gt;
+                &lt;/div&gt;
+              )}
+            &lt;/div&gt;
+            {viewMode === 'list' && (
+              &lt;div&gt;
+                &lt;h3 className="font-semibold text-lg" style={{ color: bot.primaryColor }}&gt;
+                  {bot.name}
+                &lt;/h3&gt;
+                &lt;p className="text-sm text-gray-600 line-clamp-1"&gt;
+                  {bot.description}
+                &lt;/p&gt;
+              &lt;/div&gt;
+            )}
+          &lt;/div&gt;
+          {viewMode === 'grid' && (
+            &lt;div className="flex items-center space-x-1"&gt;
+              {bot.isPublic ? (
+                &lt;Globe className="w-4 h-4" style={{ color: '#71ffbb' }} title="Public" /&gt;
+              ) : (
+                &lt;Lock className="w-4 h-4 text-gray-400" title="Private" /&gt;
+              )}
+            &lt;/div&gt;
+          )}
+        &lt;/div&gt;
+        
+        {/* Content for Grid View */}
+        {viewMode === 'grid' && (
+          &lt;&gt;
+            &lt;h3 className="font-semibold text-xl mb-2" style={{ color: bot.primaryColor }}&gt;
+              {bot.name}
+            &lt;/h3&gt;
+            &lt;p className="text-base text-gray-600 mb-4 line-clamp-2"&gt;
+              {bot.description}
+            &lt;/p&gt;
+          &lt;/&gt;
+        )}
+      &lt;/div&gt;
+      
+      {/* Stats */}
+      &lt;div className={`flex items-center ${
+        viewMode === 'list' 
+          ? 'space-x-6 ml-auto' 
+          : 'justify-between text-base'
+      }`}&gt;
+        &lt;div className="flex items-center space-x-1"&gt;
+          &lt;Heart className="w-5 h-5" style={{ color: '#ff67c7' }} /&gt;
+          &lt;span style={{ color: '#ff67c7' }} className="font-medium"&gt;
+            {bot.likes}
+          &lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div className="flex items-center space-x-1"&gt;
+          &lt;Share2 className="w-5 h-5" style={{ color: '#0aabde' }} /&gt;
+          &lt;span style={{ color: '#0aabde' }} className="font-medium"&gt;
+            {bot.shares}
+          &lt;/span&gt;
+        &lt;/div&gt;
+        &lt;div className="flex items-center space-x-1"&gt;
+          &lt;MessageCircle className="w-5 h-5" style={{ color: '#ff9671' }} /&gt;
+          &lt;span style={{ color: '#ff9671' }} className="font-medium"&gt;
+            {bot.responseCount}
+          &lt;/span&gt;
+        &lt;/div&gt;
+        {viewMode === 'list' && (
+          &lt;ChevronRight className="w-5 h-5 ml-4" style={{ color: bot.primaryColor }} /&gt;
+        )}
+      &lt;/div&gt;
+      
+      {/* Tags for Grid View */}
+      {viewMode === 'grid' && bot.tags && bot.tags.length > 0 && (
+        &lt;div className="mt-4 flex flex-wrap gap-1"&gt;
+          {bot.tags.slice(0, 3).map((tag, idx) => (
+            &lt;span 
+              key={idx} 
+              className="text-sm px-3 py-1 text-white rounded-full"
+              style={{ 
+                backgroundColor: ['#ff67c7', '#0aabde', '#ff9671'][idx % 3],
+                fontSize: '0.75rem'
+              }}
+            &gt;
+              #{tag}
+            &lt;/span&gt;
+          ))}
+          {bot.tags.length > 3 && (
+            &lt;span className="text-sm px-3 py-1 bg-gray-200 text-gray-600 rounded-full"&gt;
+              +{bot.tags.length - 3}
+            &lt;/span&gt;
+          )}
+        &lt;/div&gt;
+      )}
+    &lt;/div&gt;
+  );
+};
+
+export default ChatbotGallery;</pre>
+        </div>
+
+        <!-- CSS for line-clamp utility -->
+        <div class="file-section">
+            <div class="file-path">Add to src/index.css (if not already present)</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre class="code-block">/* Line clamp utilities */
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}</pre>
+        </div>
+
+        <div class="preview">
+            <h3>📸 Component Preview</h3>
+            <p>The ChatbotGallery component includes:</p>
+            <ul>
+                <li><strong>Header</strong>: Title and Create New button</li>
+                <li><strong>Search Bar</strong>: Full-text search across names, descriptions, and tags</li>
+                <li><strong>Filter Dropdown</strong>: All, Mine, Public Only</li>
+                <li><strong>View Toggle</strong>: Switch between Grid and List views</li>
+                <li><strong>Results Count</strong>: Shows number of filtered results</li>
+                <li><strong>Chatbot Cards</strong>: Display chatbot info with hover effects</li>
+            </ul>
+            
+            <h4>Features:</h4>
+            <ul>
+                <li>✨ Smooth hover animations</li>
+                <li>👑 Owner indicators (crown icon)</li>
+                <li>🔒 Privacy indicators (globe/lock icons)</li>
+                <li>📊 Stats display (likes, shares, responses)</li>
+                <li>🏷️ Tag display (up to 3 tags with overflow indicator)</li>
+                <li>📱 Fully responsive design</li>
+                <li>🎨 Color-coded based on chatbot's primary color</li>
+            </ul>
+        </div>
+
+        <div class="instructions">
+            <h2>🔧 Usage Example</h2>
+            <pre class="code-block">// In your parent component (App.jsx)
+&lt;ChatbotGallery
+  chatbots={chatbots}
+  onSelectBot={handleSelectBot}
+  onCreateNew={handleCreateNew}
+  currentUser={currentUser}
+/&gt;</pre>
+        </div>
+
+        <div class="instructions">
+            <h2>📝 Props</h2>
+            <ul>
+                <li><strong>chatbots</strong>: Array of chatbot objects</li>
+                <li><strong>onSelectBot</strong>: Function called when a chatbot is clicked</li>
+                <li><strong>onCreateNew</strong>: Function called when Create New button is clicked</li>
+                <li><strong>currentUser</strong>: Current user object (to identify owned chatbots)</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const codeBlock = button.parentElement.querySelector('.code-block');
+            const textArea = document.createElement('textarea');
+            textArea.value = codeBlock.textContent;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            
+            const originalText = button.textContent;
+            button.textContent = 'Copied!';
+            button.style.backgroundColor = '#22c55e';
+            
+            setTimeout(() => {
+                button.textContent = originalText;
+                button.style.backgroundColor = '#0aabde';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
