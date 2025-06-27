@@ -1,11 +1,10 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { ArrowLeft, Coins, Star, Lightbulb, Trophy, Book } from 'lucide-react';
-import TreasurePopup from './TreasurePopup';
-import GameStore from './GameStore';
-import MusicPlayer from './MusicPlayer';
-import ConceptSummary from './ConceptSummary';
-import TechDivaLoader from './TechDivaLoader';
-import TechDivaAvatar from '../common/TechDivaAvatar';
+import TreasurePopup from './components/TreasurePopup';
+import GameStore from './components/GameStore';
+import MusicPlayer from './components/MusicPlayer';
+import ConceptSummary from './components/ConceptSummary';
+import TechDivaLoader from './components/TechDivaLoader';
 
 const CodingGame = ({ onBack, currentUser }) => {
   // Game state
@@ -21,29 +20,43 @@ const CodingGame = ({ onBack, currentUser }) => {
   const [gameStarted, setGameStarted] = useState(false);
   const [isPlayingFinalSequence, setIsPlayingFinalSequence] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [showGame, setShowGame] = useState(false);
 
   // Game map - 8x6 grid
   const mapWidth = 8;
   const mapHeight = 6;
 
-  // Treasure positions and concepts - wrapped in useMemo to prevent unnecessary re-renders
-  const treasures = useMemo(() => [
+  // Treasure positions and concepts
+  const treasures = [
     { id: 1, x: 3, y: 2, concept: 'Variables', description: 'Variables are like magic boxes that hold special things! You can put numbers, words, or anything inside them and use them later.', coins: 10 },
     { id: 2, x: 6, y: 1, concept: 'Loops', description: 'Loops help us do things over and over again! Like brushing your teeth every morning - you repeat the same steps!', coins: 15 },
     { id: 3, x: 2, y: 4, concept: 'Functions', description: 'Functions are like recipes! You tell the computer step by step how to do something, and it follows your recipe perfectly!', coins: 20 },
     { id: 4, x: 7, y: 3, concept: 'Conditionals', description: 'Conditionals help computers make choices! Like "IF it\'s raining, THEN take an umbrella, ELSE wear sunglasses!"', coins: 25 },
     { id: 5, x: 1, y: 5, concept: 'Arrays', description: 'Arrays are like toy boxes with many compartments! You can store lots of things in order and find them easily!', coins: 30 },
     { id: 6, x: 5, y: 4, concept: 'Objects', description: 'Objects are like describing your favorite toy! They have properties like color, size, and what they can do!', coins: 35 }
-  ], []);
+  ];
 
-  // Updated: Unlit Mystery areas (replacing Ignorance) - wrapped in useMemo for consistency
-  const unlitMysteryAreas = useMemo(() => [
+  // Updated: Unlit Mystery areas (replacing Ignorance)
+  const unlitMysteryAreas = [
     { x: 0, y: 0 }, { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 },
     { x: 4, y: 0 }, { x: 5, y: 0 }, { x: 6, y: 0 }, { x: 7, y: 0 },
     { x: 0, y: 1 }, { x: 0, y: 2 }, { x: 0, y: 3 }, { x: 0, y: 4 }, { x: 0, y: 5 }
-  ], []);
+  ];
 
-  // Handle keyboard movement - MOVED BEFORE EARLY RETURN
+  // Show loader first
+  if (isLoading) {
+    return (
+      <TechDivaLoader 
+        onComplete={() => {
+          setIsLoading(false);
+          setShowGame(true);
+          setGameStarted(true);
+        }} 
+      />
+    );
+  }
+
+  // Handle keyboard movement
   const handleKeyPress = useCallback((event) => {
     if (showTreasure || showStore) return;
 
@@ -73,7 +86,7 @@ const CodingGame = ({ onBack, currentUser }) => {
     });
   }, [showTreasure, showStore, mapWidth, mapHeight]);
 
-  // TechDiva introduction when game starts - MOVED BEFORE EARLY RETURN
+  // TechDiva introduction when game starts
   useEffect(() => {
     if (!gameStarted) {
       const introTimeout = setTimeout(() => {
@@ -98,13 +111,13 @@ const CodingGame = ({ onBack, currentUser }) => {
     }
   }, [gameStarted]);
 
-  // Set up keyboard listeners - MOVED BEFORE EARLY RETURN
+  // Set up keyboard listeners
   useEffect(() => {
     window.addEventListener('keydown', handleKeyPress);
     return () => window.removeEventListener('keydown', handleKeyPress);
   }, [handleKeyPress]);
 
-  // Check for treasure collection - MOVED BEFORE EARLY RETURN
+  // Check for treasure collection
   useEffect(() => {
     const currentTreasure = treasures.find(
       treasure => treasure.x === playerPosition.x && 
@@ -115,19 +128,7 @@ const CodingGame = ({ onBack, currentUser }) => {
     if (currentTreasure) {
       setShowTreasure(currentTreasure);
     }
-  }, [playerPosition, collectedTreasures, treasures]);
-
-  // Show loader first
-  if (isLoading) {
-    return (
-      <TechDivaLoader 
-        onComplete={() => {
-          setIsLoading(false);
-          setGameStarted(true);
-        }} 
-      />
-    );
-  }
+  }, [playerPosition, collectedTreasures]);
 
   // Handle treasure collection
   const handleTreasureCollected = async (treasure) => {
@@ -260,8 +261,7 @@ const CodingGame = ({ onBack, currentUser }) => {
           >
             {/* TechDiva character */}
             {isPlayer && (
-              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center shadow-lg animate-pulse relative">
-                <div className="text-xs absolute -top-2 left-1/2 transform -translate-x-1/2">👑</div>
+              <div className="w-12 h-12 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center shadow-lg animate-pulse">
                 <span className="text-white font-bold text-sm">👩‍💻</span>
               </div>
             )}
@@ -440,7 +440,7 @@ const CodingGame = ({ onBack, currentUser }) => {
       {isPlayingFinalSequence && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white rounded-lg p-8 max-w-md text-center">
-            <TechDivaAvatar size="large" showCrown={true} animated={true} className="mb-4" />
+            <div className="text-6xl mb-4 animate-bounce">👩‍💻</div>
             <h2 className="text-2xl font-bold text-purple-600 mb-4">
               TechDiva is celebrating your victory!
             </h2>

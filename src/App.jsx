@@ -15,7 +15,7 @@ import ChatInterface from './components/chat/ChatInterface';
 import Navigation from './components/layout/Navigation';
 import DocumentManager from './components/storage/DocumentManager';
 import StorePage from './components/store/StorePage';
-import CodingGame from './components/game/CodingGame';
+import CodingGame from './components/game/coding-adventure/CodingGame';
 import GamesGallery from './components/game/GamesGallery';
 
 // Import mock data

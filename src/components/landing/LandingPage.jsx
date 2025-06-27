@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
-import { Sparkles, Crown, ChevronLeft, ChevronRight, ShoppingBag, BookOpen, Gem, GraduationCap, Users, Code, Lightbulb } from 'lucide-react';
+import { Zap, Share2, Shield, Sparkles, Crown, ChevronLeft, ChevronRight, Play, MessageCircle, ShoppingBag, BookOpen, Library, BookOpenCheck, Gem, DollarSign, GraduationCap, Users, Code, Lightbulb } from 'lucide-react';
 import TechDivaLogo from '../common/TechDivaLogo';
 import { testimonials } from '../../constants';
 
@@ -439,43 +439,31 @@ const LandingPage = ({ onGetStarted, onLogin, onGoToStore, onOpenChat, onPlayGam
           </p>
           
           {/* Value proposition */}
-          <div className="bg-white bg-opacity-20 rounded-full px-6 py-2 inline-block mb-6 backdrop-blur-sm">
+          <div className="bg-white bg-opacity-20 rounded-full px-6 py-2 inline-block mb-4 backdrop-blur-sm">
             <span className="text-white font-semibold">🌟 From curious minds to creative innovators - Start your family's AI adventure today!</span>
           </div>
           
-          {/* Main CTA heading */}
-          <h3 className="text-2xl md:text-3xl font-bold text-white mb-6">
-            Begin Your AI Adventure
-          </h3>
+          <br/>
           
-          {/* Two clear action buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center space-y-3 sm:space-y-0 sm:space-x-4">
             <button
               onClick={onGetStarted}
               disabled={isLoading}
-              className="px-8 py-4 text-white rounded-full text-xl font-semibold transform hover:scale-105 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="px-8 py-3 text-white rounded-full text-xl font-semibold transform hover:scale-105 transition-all shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
               style={{ backgroundColor: '#0aabde' }}
               onMouseEnter={(e) => !isLoading && (e.target.style.backgroundColor = '#ff9671')}
               onMouseLeave={(e) => !isLoading && (e.target.style.backgroundColor = '#0aabde')}
             >
-              <Users className="w-5 h-5" />
-              <span>{isLoading ? 'Loading...' : 'Join Community'}</span>
+              {isLoading ? 'Loading...' : 'Begin Your AI Adventure'}
             </button>
 
-            <button
-              onClick={onPlayGames}
-              className="px-8 py-4 bg-white text-purple-600 rounded-full text-xl font-semibold transform hover:scale-105 transition-all shadow-lg flex items-center space-x-2 hover:bg-purple-50"
-              style={{ color: '#ff67c7' }}
-            >
-              <Code className="w-5 h-5" />
-              <span>Play Games</span>
-            </button>
+            {/* Removed: Play Games button - now handled by Coding button in navigation */}
           </div>
 
-          {/* Updated subtitle to mention both options */}
+          {/* Updated subtitle to mention coding games */}
           <div className="mt-6 text-center">
             <p className="text-sm text-white opacity-90">
-              🎮 <strong>New!</strong> Try our interactive coding games or join our amazing community!
+              🎮 <strong>New!</strong> Try our interactive coding games - click "Coding" in the menu above!
             </p>
           </div>
         </div>

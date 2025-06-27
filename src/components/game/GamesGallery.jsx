@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft, Play, Star, Clock, Users, Trophy } from 'lucide-react';
-import CodingGame from './CodingGame';
+import CodingGame from './coding-adventure/CodingGame';
 
 const GamesGallery = ({ onBack }) => {
   const [selectedGame, setSelectedGame] = useState(null);
